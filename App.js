@@ -218,7 +218,7 @@ function ProfileScreen({ navigation }) {
           </View>
         }
         <Button onPress={() => { navigation.navigate("Achievements") }} width={'100px'} height={'30px'}> 
-          <Text> Achievements  </Text>
+        Achievements  
         </Button> 
       </View>
     </ImageBackground>
@@ -291,7 +291,10 @@ function AchievementsScreen({ navigation }) {
       <View>
         {data &&
           <View>
-            {data.map((res, idx) => {
+            {data.filter((res) => ( filter.length === 0 || 
+              filter.includes(res.category)
+            )).map((res, idx) => {
+              console.log("THIS IS RES", res)
               return (
                 <View key={idx}>
                   <Text> {res.name} </Text>
@@ -312,6 +315,12 @@ function AchievementsScreen({ navigation }) {
         <View className="div_filter">
           <View>
             <Text className="text-white">Filter</Text>
+            {/* <div className="form-check">
+              <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
+              <label className="form-check-label text-white" htmlFor="flexCheckDefault">
+                Completed
+              </label>
+            </div> */}
             <View className="form-check">
               <input onClick={() => handleCheckboxChange(1)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
               <label className="form-check-label text-white" htmlFor="flexCheckDefault">
