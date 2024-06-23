@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { LogBox, StyleSheet, Text, View, Image, ImageBackground, TextInput, Button, TouchableOpacity } from 'react-native';
+import { LogBox, StyleSheet, Text, View, Image, ImageBackground, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState, useEffect } from 'react';
@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { io } from "socket.io-client";
 import BigNumber from "bignumber.js";
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 const socket = io("https://joypadapi.onrender.com/");
 const Stack = createNativeStackNavigator();
@@ -176,50 +177,57 @@ function ProfileScreen({ navigation }) {
   return (
     <ImageBackground source={{ uri: 'https://joypadapi.onrender.com/image/bg.png' }} resizeMode="cover" style={styles.page_bg}>
       <View>
-        { userInfo &&
-          <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 40,}}>
-              <View style={[styles.header_profile ,{ flexDirection: "row", justifyContent: "space-between" }]}>
-                <TouchableOpacity onClick={() => {navigation.navigate("Profile")}}>
-                  <Image source={{ uri: 'https://joypadapi.onrender.com/image/logo.png' }} style={{ width: 47, height: 47,}}  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                <Image source={{ uri: 'https://joypadapi.onrender.com/image/strelka_left.png' }} style={{ width: 36, height: 36,}}  />
-                </TouchableOpacity>
-              </View>
-              <View style={{gap: 11,  }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
-                  <Image source={{ uri: userInfo.avatar }} style={{ width: 100, height: 100, borderRadius: 50, borderColor: "#9747FF", borderWidth: 3 }} />
-                  <View>
-                    <Image source={{ uri: `https://www.opendota.com/assets/images/dota2/rank_icons/rank_icon_${`${userInfo.rank}` == 'null' ? 0 : `${userInfo.rank}`[0]}.png` }} style={{ width: 100, height: 100 }} />
-                    {info.rank != null && info.rank[1] != 0 &&
-                      <Image source={{ uri: `https://www.opendota.com/assets/images/dota2/rank_icons/rank_star_${userInfo.rank[1]}.png` }} />}
-                  </View>
-                </View>
-                <Text style={{color: "#B198DD", fontFamily: "br_hendrix_r", fontSize: 20}}>{info.name}</Text>
-                <Text>{info.description || ""}</Text>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <View>
-                    <Text style={{color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>victory</Text>
-                    <Text style={{color: "#66BB6A", fontFamily: "br_hendrix_r", fontSize: 31}}>{info.winrate.win}</Text>
-                  </View>
-                  <View>
-                    <Text style={{color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>defeats</Text>
-                    <Text style={{color: "#FF4C4C", fontFamily: "br_hendrix_r", fontSize: 31}}>{info.winrate.lose}</Text>
-                  </View>
-                  <View>
-                    <Text style={{color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>win share</Text>
-                    <Text style={{color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 31}}>{Math.round(100 / (info.winrate.win + info.winrate.lose == 0 ? 1 : info.winrate.win + info.winrate.lose) * info.winrate.win)}%</Text>
-                  </View>
+        {userInfo &&
+          <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 40, }}>
+            <View style={[styles.header_profile, { flexDirection: "row", justifyContent: "space-between" }]}>
+              <TouchableOpacity onClick={() => { navigation.navigate("Profile") }}>
+                <Image source={{ uri: 'https://joypadapi.onrender.com/image/logo.png' }} style={{ width: 47, height: 47, }} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { navigation.navigate("Groups") }}>
+                <Image source={{ uri: 'https://joypadapi.onrender.com/image/strelka_left.png' }} style={{ width: 36, height: 36, }} />
+              </TouchableOpacity>
+            </View>
+            <View style={{ gap: 11, }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
+                <Image source={{ uri: userInfo.avatar }} style={{ width: 100, height: 100, borderRadius: 50, borderColor: "#9747FF", borderWidth: 3 }} />
+                <View>
+                  <Image source={{ uri: `https://www.opendota.com/assets/images/dota2/rank_icons/rank_icon_${`${userInfo.rank}` == 'null' ? 0 : `${userInfo.rank}`[0]}.png` }} style={{ width: 100, height: 100 }} />
+                  {info.rank != null && info.rank[1] != 0 &&
+                    <Image source={{ uri: `https://www.opendota.com/assets/images/dota2/rank_icons/rank_star_${userInfo.rank[1]}.png` }} />}
                 </View>
               </View>
-              <View>
-              <Text style={{color: "#FFFFFF", fontSize: 20}}>About me</Text>
+              <Text style={{ color: "#B198DD", fontFamily: "br_hendrix_r", fontSize: 20 }}>{info.name}</Text>
+              <Text>{info.description || ""}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>victory</Text>
+                  <Text style={{ color: "#66BB6A", fontFamily: "br_hendrix_r", fontSize: 31 }}>{info.winrate.win}</Text>
+                </View>
+                <View>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>defeats</Text>
+                  <Text style={{ color: "#FF4C4C", fontFamily: "br_hendrix_r", fontSize: 31 }}>{info.winrate.lose}</Text>
+                </View>
+                <View>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>win share</Text>
+                  <Text style={{ color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 31 }}>{Math.round(100 / (info.winrate.win + info.winrate.lose == 0 ? 1 : info.winrate.win + info.winrate.lose) * info.winrate.win)}%</Text>
+                </View>
               </View>
+            </View>
+            <View>
+              <Text style={{ color: "#FFFFFF", fontSize: 20 }}>About me</Text>
+            </View>
           </View>
         }
-        <Button onPress={() => { navigation.navigate("Achievements") }} width={'100px'} height={'30px'}> 
-        Achievements  
-        </Button> 
+        <TouchableOpacity onPress={() => { navigation.navigate('Achievements') }}>
+          <Text style={{ color: "white" }}>
+            User Achievements
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => { navigation.navigate('Chat') }}>
+          <Text style={{ color: "white" }}>
+            Chat
+          </Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   )
@@ -250,25 +258,25 @@ function AchievementsScreen({ navigation }) {
             setData(resp.achievement)
             console.log("THIS IS DATA", data)
           })
-        if(!stats){
-          fetch("https://joypadapi.onrender.com/user/stats", {
-            method: "GET",
-            headers: {
-              token: token
-            }
-          }).then((respons) => {
-            console.log("FETCH 2")
-            return respons.json()
-          }).then((rep) => {
-            console.log("FETCH 3")
-            console.log(rep)
-            setStats(rep.message)
-            console.log("THIS IS STATS", stats)
-          })
-        }
-        // if (!filter){
-          
-        // }
+          if (!stats) {
+            fetch("https://joypadapi.onrender.com/user/stats", {
+              method: "GET",
+              headers: {
+                token: token
+              }
+            }).then((respons) => {
+              console.log("FETCH 2")
+              return respons.json()
+            }).then((rep) => {
+              console.log("FETCH 3")
+              console.log(rep)
+              setStats(rep.message)
+              console.log("THIS IS STATS", stats)
+            })
+          }
+          // if (!filter){
+
+          // }
         }
       } else {
         removeValue("token")
@@ -288,53 +296,67 @@ function AchievementsScreen({ navigation }) {
 
   return (
     <ImageBackground source={{ uri: 'https://joypadapi.onrender.com/image/bg.png' }} resizeMode="cover" style={styles.page_bg}>
-      <View>
-        {data &&
-          <View>
-            {data.filter((res) => ( filter.length === 0 || 
-              filter.includes(res.category)
-            )).map((res, idx) => {
-              console.log("THIS IS RES", res)
-              return (
-                <View key={idx}>
-                  <Text> {res.name} </Text>
-                  <View>
-                    <Image loader={() => `https://joypadapi.onrender.com/image/message_icon_achievements.png`} src={"https://joypadapi.onrender.com/image/message_icon_achievements.png"} width={111} height={111} />
-                  </View>
-                  {stats &&
-                    <View>
-                      <progress className={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "styles2.progress1" : "styles2.progress2"} max={res.value} value={res.category == 1 ? stats.sentMessages : stats.deletedMessages}></progress>
-                      <Text>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value} </Text>
-                    </View>
-                  }
-                </View>
-              )
-            })}
-          </View>
-        }
-        <View className="div_filter">
-          <View>
-            <Text className="text-white">Filter</Text>
+      <View style={{ justifyContent: "space-between", flexDirection: "column", alignItems: 'center', gap: 10, paddingLeft: 20, paddingRight: 20, paddingTop: 40, }}>
+        <View style={[styles.header_profile, { flexDirection: "row", justifyContent: "space-between" }]}>
+          <TouchableOpacity onClick={() => { navigation.navigate("Profile") }}>
+            <Image source={{ uri: 'https://joypadapi.onrender.com/image/logo.png' }} style={{ width: 47, height: 47, }} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate("Groups") }}>
+            <Image source={{ uri: 'https://joypadapi.onrender.com/image/strelka_left.png' }} style={{ width: 36, height: 36, }} />
+          </TouchableOpacity>
+        </View>
+        <View className="div_filter" style={{ padding: 15, paddingBottom: 15, paddingTop: 15, backgroundColor: "rgba(27, 22, 42, 0.3)", backdropFilter: "blur(10px)", width: 256, borderRadius: 30, }}>
+          <View style={{ gap: 20, }}>
+            <Text className="text-white" style={{ color: "white", fontSize: 20, }}>Filter</Text>
             {/* <div className="form-check">
               <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
               <label className="form-check-label text-white" htmlFor="flexCheckDefault">
                 Completed
               </label>
             </div> */}
-            <View className="form-check">
-              <input onClick={() => handleCheckboxChange(1)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
-              <label className="form-check-label text-white" htmlFor="flexCheckDefault">
-                Send
-              </label>
-            </View>
-            <View className="form-check">
-              <input onClick={() => handleCheckboxChange(2)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
-              <label className="form-check-label text-white" htmlFor="flexCheckDefault">
-                Delete
-              </label>
+            <View style={{ gap: 20, }}>
+              <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <label className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
+                  Send
+                </label>
+                <input onClick={() => handleCheckboxChange(1)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
+              </View>
+              <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <label className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
+                  Delete
+                </label>
+                <input onClick={() => handleCheckboxChange(2)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
+              </View>
             </View>
           </View>
         </View>
+        {data &&
+          <View >
+            {data.filter((res) => (filter.length === 0 ||
+              filter.includes(res.category)
+            )).map((res, idx) => {
+              console.log("THIS IS RES", res)
+              return (
+                <View style={{ gap: 10 }}>
+                  <ScrollView>
+                  <View key={idx} style={{ width: 246, height: 238, backgroundColor: "rgba(27, 22, 42, 0.3)", backdropFilter: "blur(10px)", borderRadius: 30, justifyContent: "space-between", flexDirection: "column", alignItems: 'center', padding: 15, }}>
+                    <Text style={{ color: "white", fontWeight: 800, fontSize: 20 }}> {res.name} </Text>
+                    <View>
+                      <Image loader={() => `https://joypadapi.onrender.com/image/message_icon_achievements.png`} src={"https://joypadapi.onrender.com/image/message_icon_achievements.png"} width={111} height={111} style={{ borderRadius: 50, }} />
+                    </View>
+                    {stats &&
+                      <View style={{ justifyContent: "space-between", flexDirection: "column", alignItems: 'center', }}>
+                        <progress className={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "styles2.progress1" : "styles2.progress2"} max={res.value} value={res.category == 1 ? stats.sentMessages : stats.deletedMessages}></progress>
+                        <Text style={{ color: "white", fontWeight: 400, fontSize: 20 }}>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value} </Text>
+                      </View>
+                    }
+                  </View>
+                  </ScrollView>
+                </View>
+              )
+            })}
+          </View>
+        }
       </View>
     </ImageBackground>
   )
@@ -345,17 +367,233 @@ function ChatScreen({ navigation }) {
   const [message, setMessage] = useState()
   const [messages, setMessages] = useState([])
   const [group, setGroup] = useState()
+  const [groups, setGroups] = useState()
+  const [info, setInfo] = useState()
+  
+  async function updateMessages(groupId) {
+    if (groupId && groupId != group) {
+      await fetch(`https://joypadapi.onrender.com/messages/group/${groupId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          token: token
+        }
+      }).then((ressp) => {
+        return ressp.json()
+      }).then(async (mesgs) => {
+        const msgs = []
+        fetch(`https://joypadapi.onrender.com/group/users/avatar/${groupId}`, {
+          method: "GET"
+        }).then((avas) => {
+          return avas.json()
+        }).then(async (avatars) => {
+          for await (let i of mesgs.messages) {
+            i["avatar"] = avatars.avatars[`${i.steamid}`]
+            msgs.push(i)
+          }
+          setMessages(msgs)
+        })
+      })
+    }
+  }
 
   getData("token").then((token) => {
     if (token) {
+      console.log(token)
       if (token != null) {
-
+        if (!info) {
+          fetch('https://joypadapi.onrender.com/user/auth', {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token
+            },
+          }).then((result) => {
+            return result.json()
+          }).then((resul) => {
+            if (resul.code != 200) {
+              navigation.navigate("Auth")
+            }
+            setInfo(resul.info)
+          }).then(() => {
+            if (!groups) {
+              fetch('https://joypadapi.onrender.com/user/groups/', {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  token: token
+                }
+              }).then((result) => {
+                return result.json()
+              }).then((reslt) => {
+                if (reslt.groups != null) {
+                  setGroups(reslt.groups)
+                  setGroup(reslt.groups[0].id)
+                  updateMessages(reslt.groups[0].id)
+                }
+              })
+            }
+          })
+        }
       } else {
         removeValue("token")
         navigation.navigate("Auth")
       }
+    } else {
+      removeValue("token")
+      navigation.navigate("Auth")
     }
   })
+
+
+
+  return (
+    <div className={styles.messages}>
+      {messages.length > 0 &&
+        <div id="ll" className={styles.messageArea} onLoad={() => { const obj = document.querySelector("#ll"); obj.scrollTo(0, obj.scrollHeight) }}>
+          {messages.map((mess, idx) => {
+            let prevDate
+            if (messages[idx - 1]) {
+              prevDate = messages[idx - 1].createdAt.split('T')[0].split(":")
+            }
+            const avatarExist = !messages[idx - 1] || messages[idx - 1].steamid != messages[idx].steamid
+            const timeSrc = mess.createdAt.split('T')[1].split(":")
+            const time = timeSrc[0] + ":" + timeSrc[1]
+            const dateSrc = mess.createdAt.split('T')[0]
+
+            return (
+              <div className={styles.oneDayMassage} key={idx}>
+                {(!prevDate || prevDate != dateSrc) &&
+                  <div className={styles.dateDiv}>
+                    <hr className={styles.messageTimeLine} />
+                    <h6 className={styles.messageDate}>{dateSrc}</h6>
+                    <hr className={styles.messageTimeLine} />
+                  </div>
+                }
+                <div className={styles.message} key={idx}>
+
+                  {avatarExist &&
+                    <img className={styles.avatar} src={mess.avatar} />
+                  }
+                  {!avatarExist &&
+                    <div className={styles.messageTimeDel}>
+                      {mess.steamid == info.steamID &&
+                        <img className={styles.delImg} src='https://joypadapi.onrender.com/image/delete.png' onClick={() => { deleteMessage(mess.id) }} />
+                      }
+                      <p className={styles.messageTimeInvis}>{time}</p>
+                    </div>
+                  }
+                  <div className={styles.messageBlock}>
+                    {(!messages[idx - 1] || messages[idx - 1].steamid != messages[idx].steamid) &&
+                      <div className={styles.messageInfo}>
+                        <h3 className={styles.messageName}>{mess.name}</h3>
+                        <h6 className={styles.messageTime}>{time}</h6>
+                        {mess.steamid == info.steamID &&
+                          <img className={styles.delImg} src='https://joypadapi.onrender.com/image/delete.png' onClick={() => { deleteMessage(mess.id) }} />
+                        }
+                      </div>
+                    }
+                    {mess.value.split("\n").map((ms, idx) => {
+                      return (
+                        <p key={idx} className={styles.messageText}>{ms}</p>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      }
+      <div className={styles.enterMessage}>
+        <textarea className={styles.sendInput} onChange={(e) => { setMessage(e.target.value) }} value={message} minLength={1} maxLength={3000}></textarea>
+        {!(mute) &&
+          <button className={styles.sendButton} onClick={sendMessage}>
+            <Image loader={() => `https://joypadapi.onrender.com/image/send1.png`} src={"https://joypadapi.onrender.com/image/send1.png"} width={25} height={25} />
+          </button>
+        }
+      </div>
+    </div>
+  )
+}
+
+function GroupSelection({ navigation }) {
+
+  const [message, setMessage] = useState()
+  const [messages, setMessages] = useState([])
+  const [group, setGroup] = useState()
+  const [groups, setGroups] = useState()
+  const [info, setInfo] = useState()
+
+  getData("token").then((token) => {
+    if (token) {
+      if (token != null) {
+        if (!info) {
+          fetch('https://joypadapi.onrender.com/user/auth', {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token
+            },
+          }).then((result) => {
+            return result.json()
+          }).then((resul) => {
+            if (resul.code != 200) {
+              navigation.navigate("Auth")
+            }
+            setInfo(resul.info)
+          }).then(() => {
+            if (!groups) {
+              console.log("Token", token)
+              fetch('https://joypadapi.onrender.com/user/groups/', {
+                method: "GET",
+                headers: {
+                  token: token
+                }
+              }).then((result) => {
+                return result.json()
+              }).then((reslt) => {
+                if (reslt.groups != null) {
+                  setGroups(reslt.groups)
+                  setGroup(reslt.groups[0].id)
+                }
+              })
+            }
+          })
+        }
+      } else {
+        removeValue("token")
+        navigation.navigate("Auth")
+      }
+    } else {
+      removeValue("token")
+      navigation.navigate("Auth")
+    }
+  })
+
+  return (
+    <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 40, backgroundColor: "#120742", height: "100%" }}>
+      <View style={[styles.header_profile, { flexDirection: "row", justifyContent: "space-between" }]}>
+        <TouchableOpacity onPress={() => { navigation.navigate("Profile") }}>
+          <Image source={{ uri: 'https://joypadapi.onrender.com/image/logo.png' }} style={{ width: 47, height: 47, }} />
+        </TouchableOpacity>
+      </View>
+      <View>
+        {groups &&
+          groups.map((grp, idx) => {
+            return (
+              <Button key={idx} className={Number(grp.id) == Number(group) ? "styles.sideBarButtonsSelected" : "styles.sideBarButtons"} title={JSON.stringify(grp.name)} value={grp.id} onPress={(e) => { if (e.target.value && Number(e.target.value) != group) { setGroup(Number(e.target.value)).then(navigation.navigate('Chat')) } }}>
+                <View>{grp.name}</View>
+                <TouchableOpacity>
+                  <Image loader={() => `https://joypadapi.onrender.com/image/dots1.png`} src={"https://joypadapi.onrender.com/image/dots1.png"} width={36} height={36} />
+                </TouchableOpacity>
+              </Button>
+            )
+          })
+        }
+      </View>
+    </View>
+  )
 }
 
 
@@ -375,6 +613,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name='Profile' component={ProfileScreen} />
         <Stack.Screen options={{ headerShown: false }} name='Achievements' component={AchievementsScreen} />
         <Stack.Screen options={{ headerShown: false }} name='Chat' component={ChatScreen} />
+        <Stack.Screen options={{ headerShown: false }} name='Groups' component={GroupSelection} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -418,7 +657,7 @@ const styles = StyleSheet.create({
     width: "100px",
     height: "100px",
   },
-  header_profile: { 
+  header_profile: {
     width: "100%",
     height: "87px",
     alignItems: "center",
