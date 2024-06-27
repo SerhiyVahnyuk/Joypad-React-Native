@@ -360,10 +360,10 @@ function ChatScreen({ navigation, route }) {
 
   const groupId = route.params.groupId
 
-  function updateMessages(grpId) {
+  function updateMessages(grup) {
     getData("token").then((token) => {
       if (token) {
-        if (groupId && groupId != group) {
+        if (groupId && grup != group) {
           fetch(`https://joypadapi.onrender.com/messages/group/${groupId}`, {
             method: "GET",
             headers: {
@@ -423,8 +423,10 @@ function ChatScreen({ navigation, route }) {
                 }).then((reslt) => {
                   if (reslt.groups != null) {
                     setGroups(reslt.groups)
-                    setGroup(reslt.groups[0].id)
-                    updateMessages(reslt.groups[0].id)
+                    setGroup(groupId)
+                    updateMessages(groupId)
+                    // setGroup(reslt.groups[0].id)
+                    // updateMessages(reslt.groups[0].id)
                   }
                 })
               }
@@ -502,6 +504,14 @@ function ChatScreen({ navigation, route }) {
   return (
     <ImageBackground source={{ uri: 'https://joypadapi.onrender.com/image/bg.png' }} resizeMode="cover" style={styles.page_bg}>
       <View style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 40, height: "100%" }}>
+      <View style={[styles.header_profile, { flexDirection: "row", justifyContent: "space-between", height: 87 }]}>
+          <TouchableOpacity onPress={() => { navigation.navigate("Profile") }}>
+            <Image source={{ uri: 'https://joypadapi.onrender.com/image/logo.png' }} style={{ width: 47, height: 47 }} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate("Groups") }}>
+            <Image source={{ uri: 'https://joypadapi.onrender.com/image/strelka_left.png' }} style={{ width: 36, height: 36 }} />
+          </TouchableOpacity>
+        </View>
         <View style={{ flex: 1 }}>
           <ScrollView>
             {messages.length > 0 &&
@@ -564,7 +574,7 @@ function ChatScreen({ navigation, route }) {
   )
 }
 
-function GroupSelection({ navigation }) {
+function GroupSelection({ navigation, route }) {
 
   const [message, setMessage] = useState()
   const [messages, setMessages] = useState([])
@@ -775,8 +785,6 @@ function GroupAchievementsScreen({ navigation, route }) {
   )
 
 }
-
-// cf58f3
 
 export default function App() {
   const [loaded] = useFonts({
