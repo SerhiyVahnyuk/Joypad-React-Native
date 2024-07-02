@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import BigNumber from "bignumber.js";
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
+import * as Progress from 'react-native-progress';
 
 const socket = io("https://joypadapi.onrender.com/");
 const Stack = createNativeStackNavigator();
@@ -198,19 +198,19 @@ function ProfileScreen({ navigation }) {
                 </View>
               </View>
               <Text style={{ color: "#B198DD", fontFamily: "br_hendrix_r", fontSize: 20 }}>{info.name}</Text>
-              <Text style={{ color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 15 }} >{info.description || ""}</Text>
+              <Text style={{ color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 15}} >{info.description || ""}</Text>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View>
-                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>victory</Text>
-                  <Text style={{ color: "#66BB6A", fontFamily: "br_hendrix_r", fontSize: 31 }}>{info.winrate.win}</Text>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>victory</Text>
+                  <Text style={{ color: "#66BB6A", fontFamily: "br_hendrix_r", fontSize: 31}}>{info.winrate.win}</Text>
                 </View>
                 <View>
-                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>defeats</Text>
-                  <Text style={{ color: "#FF4C4C", fontFamily: "br_hendrix_r", fontSize: 31 }}>{info.winrate.lose}</Text>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>defeats</Text>
+                  <Text style={{ color: "#FF4C4C", fontFamily: "br_hendrix_r", fontSize: 31}}>{info.winrate.lose}</Text>
                 </View>
                 <View>
-                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20 }}>win share</Text>
-                  <Text style={{ color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 31 }}>{Math.round(100 / (info.winrate.win + info.winrate.lose == 0 ? 1 : info.winrate.win + info.winrate.lose) * info.winrate.win)}%</Text>
+                  <Text style={{ color: "#CACACA", fontFamily: "br_hendrix_r", fontSize: 20}}>win share</Text>
+                  <Text style={{ color: "#FFFFFF", fontFamily: "br_hendrix_r", fontSize: 31}}>{Math.round(100 / (info.winrate.win + info.winrate.lose == 0 ? 1 : info.winrate.win + info.winrate.lose) * info.winrate.win)}%</Text>
                 </View>
               </View>
             </View>
@@ -262,9 +262,6 @@ function UserAchievementsScreen({ navigation }) {
               console.log("THIS IS STATS", stats)
             })
           }
-          // if (!filter){
-
-          // }
         }
       } else {
         removeValue("token")
@@ -295,24 +292,24 @@ function UserAchievementsScreen({ navigation }) {
         </View>
         <View className="div_filter" style={{ padding: 15, paddingBottom: 15, paddingTop: 15, backgroundColor: "rgba(27, 22, 42, 0.73)", backdropFilter: "blur(20px)", width: 256, borderRadius: 30 }}>
           <View style={{ gap: 20 }}>
-            <Text className="text-white" style={{ color: "white", fontSize: 20 }}>Filter</Text>
+            <Text className="text-white" style={{ color: "white"}}>Filter</Text>
             <View style={{ gap: 20 }}>
               <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
+                <Text className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white", fontSize: 20 }}>
                   Send
                 </Text>
-                <BouncyCheckbox onPress={() => handleCheckboxChange(1)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
+                <BouncyCheckbox onPress={() => handleCheckboxChange(1)} fillColor='#9747FF' className="form-check-input" type="checkbox" id="flexCheckDefault" />
               </View>
               <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <Text className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
                   Delete
                 </Text>
-                <BouncyCheckbox onPress={() => handleCheckboxChange(2)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
+                <BouncyCheckbox onPress={() => handleCheckboxChange(2)} fillColor='#9747FF' className="form-check-input" type="checkbox" id="flexCheckDefault" />
               </View>
             </View>
           </View>
         </View>
-        <View style={{ paddingBottom: 200 }}>
+        <View style={{ paddingBottom: 250 }}>
           {data &&
 
             <ScrollView>
@@ -331,8 +328,8 @@ function UserAchievementsScreen({ navigation }) {
                           </View>
                           {stats &&
                             <View style={{ justifyContent: "space-between", flexDirection: "column", alignItems: 'center', }}>
-                              <Progress.Bar color={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "green" : "orange"} unfilledColor='#1B162A;' max={res.value} progress={res.category == 1 ? stats.sentMessages : stats.deletedMessages} />
-                              <Text style={{ color: "white", fontWeight: 400, fontSize: 20 }}>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value}</Text>
+                              <Progress.Bar color={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "green" : "orange"} borderColor='#1B162A' unfilledColor='#1B162A' progress={(1 / res.value) * (res.category == 1 ? stats.sentMessages : stats.deletedMessages)} />
+                              <Text style={{ color: "white", fontWeight: 400, fontSize: 20}}>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value}</Text>
                             </View>
                           }
                         </View>
@@ -541,13 +538,13 @@ function ChatScreen({ navigation, route }) {
                         }
                         <View style={{ marginLeft: 10 }}>
                           {avatarExist &&
-                            <Text style={{ color: "#9274C1", fontFamily: "br_hendrix_r", fontSize: 14 }}>{mess.name}</Text>
+                            <Text style={{ color: "#9274C1", fontFamily: "br_hendrix_r", fontSize: 14}}>{mess.name}</Text>
                           }
-                          <Text style={{ color: "#9C98AB", fontFamily: "br_hendrix_r", fontSize: 8 }}>{time}</Text>
+                          <Text style={{ color: "#9C98AB", fontFamily: "br_hendrix_r", fontSize: 8}}>{time}</Text>
                         </View>
                       </View>
                       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-                        <Text style={{ color: "#FFFFFF", fontFamily: "actor_r", fontSize: 14 }}>{mess.value}</Text>
+                        <Text style={{ color: "#FFFFFF", fontFamily: "actor_r", fontSize: 14}}>{mess.value}</Text>
                         {mess.steamid === info.steamID &&
                           <TouchableOpacity onPress={() => { deleteMessage(mess.id) }}>
                             <Image source={{ uri: "https://joypadapi.onrender.com/image/delete.png" }} width={25} height={25} />
@@ -642,7 +639,7 @@ function GroupSelection({ navigation, route }) {
             groups.map((grp, idx) => {
               return (
                 <TouchableOpacity style={{ backgroundColor: "#3D2B61", padding: 10, borderRadius: 30, height: 77, display: "flex", alignItems: "center", flexDirection: "row", justifyContent: "space-between" }} key={idx} onPress={() => { if (grp.id && Number(grp.id) != group) { setGroup(Number(grp.id)) } else { navigation.navigate('Chat', { groupId: grp.id }) } }}>
-                  <Text style={{ color: "#AF98D3", fontFamily: "br_hendrix_r", fontSize: 18 }}>{grp.name}</Text>
+                  <Text style={{ color: "#AF98D3", fontFamily: "br_hendrix_r", fontSize: 18}}>{grp.name}</Text>
                   <TouchableOpacity key={idx} onPress={() => { if (grp.id && Number(grp.id) != group) { setGroup(Number(grp.id)) && navigation.navigate('GroupAchievements', { id: grp.id }) } else { navigation.navigate('GroupAchievements', { id: grp.id }) } }}>
                     <Image key={idx} source={{ uri: "https://joypadapi.onrender.com/image/dots1.png" }} width={40} height={40} />
                   </TouchableOpacity>
@@ -728,7 +725,7 @@ function GroupAchievementsScreen({ navigation, route }) {
         </View>
         <View className="div_filter" style={{ padding: 15, paddingBottom: 15, paddingTop: 15, backgroundColor: "rgba(27, 22, 42, 0.73)", backdropFilter: "blur(20px)", width: 256, borderRadius: 30, }}>
           <View style={{ gap: 20, }}>
-            <Text className="text-white" style={{ color: "white", fontSize: 20 }}>Filter</Text>
+            <Text className="text-white" style={{ color: "white", fontSize: 20}}>Filter</Text>
             <View style={{ gap: 20, }}>
               <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
@@ -736,7 +733,7 @@ function GroupAchievementsScreen({ navigation, route }) {
                     Send
                   </Text>
                 </View>
-                <BouncyCheckbox type={'checkbox'} onPress={() => handleCheckboxChange(1)} className="form-check-input" id="flexCheckDefault" />
+                <BouncyCheckbox type={'checkbox'} onPress={() => handleCheckboxChange(1)} fillColor='#9747FF' className="form-check-input" id="flexCheckDefault" />
               </View>
               <View className="form-check" style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View className="form-check-label text-white" htmlFor="flexCheckDefault" style={{ color: "white" }}>
@@ -744,7 +741,7 @@ function GroupAchievementsScreen({ navigation, route }) {
                     Delete
                   </Text>
                 </View>
-                <BouncyCheckbox onPress={() => handleCheckboxChange(2)} className="form-check-input" type="checkbox" id="flexCheckDefault" />
+                <BouncyCheckbox onPress={() => handleCheckboxChange(2)} fillColor='#9747FF' className="form-check-input" type="checkbox" id="flexCheckDefault" />
               </View>
             </View>
           </View>
@@ -752,7 +749,7 @@ function GroupAchievementsScreen({ navigation, route }) {
         {data &&
 
           <ScrollView>
-            <View style={{ paddingBottom: 200 }}>
+            <View style={{ paddingBottom: 220 }}>
               {data.filter((res) => (filter.length === 0 ||
                 filter.includes(res.category)
               )).map((res, idx) => {
@@ -761,14 +758,14 @@ function GroupAchievementsScreen({ navigation, route }) {
                   <View key={idx} style={{ paddingBottom: 50 }}>
                     <View>
                       <View style={{ width: 246, height: 238, backgroundColor: "rgba(27, 22, 42, 0.73)", backdropFilter: "blur(20px)", borderRadius: 30, justifyContent: "space-between", flexDirection: "column", alignItems: 'center', padding: 15, }}>
-                        <Text style={{ color: "white", fontWeight: 800, fontSize: 20 }}> {res.name} </Text>
+                        <Text style={{ color: "white", fontWeight: 800, fontSize: 20}}> {res.name} </Text>
                         <View>
                           <Image loader={() => `https://joypadapi.onrender.com/image/message_icon_achievements.png`} source={{ uri: "https://joypadapi.onrender.com/image/message_icon_achievements.png" }} width={111} height={111} style={{ borderRadius: 50, }} />
                         </View>
                         {stats &&
                           <View style={{ justifyContent: "space-between", flexDirection: "column", alignItems: 'center', }}>
-                            <Progress.Bar className={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "styles2.progress1" : "styles2.progress2"} max={res.value} progress={res.category == 1 ? stats.sentMessages : stats.deletedMessages} />
-                            <Text style={{ color: "white", fontWeight: 400, fontSize: 20 }}>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value}</Text>
+                            <Progress.Bar color={Number(res.category == 1 ? stats.sentMessages : stats.deletedMessages) >= res.value ? "green" : "orange"} borderColor='#1B162A' unfilledColor='#1B162A' progress={(1 / res.value) * (res.category == 1 ? stats.sentMessages : stats.deletedMessages)} />
+                            <Text style={{ color: "white", fontWeight: 400, fontSize: 20}}>{res.category == 1 ? stats.sentMessages : stats.deletedMessages}/{res.value}</Text>
                           </View>
                         }
                       </View>
@@ -833,7 +830,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   helloText: {
-    fontSize: "48",
+    fontSize: 48,
     color: "white",
     fontFamily: "br_hendrix",
   },
